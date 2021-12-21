@@ -10,7 +10,7 @@ params: H---信道估计
 5. 去掉GI
 6. 做FFT转为频域讯号
 7. received_pilot[i]/pilot[i] = H[i]
-8. 最后获得H[i]的共轭, 用于后续传输的OFDM讯号估计信道 Z[m]=R[m]*H^(*)[m] 
+8. 最后获得H[i], 用于后续传输的OFDM讯号估计信道 Z[m]=R[m]*H^(*)[m] 
 
 
 循环主体
@@ -19,6 +19,6 @@ params: H---信道估计
 4. 时域讯号上加fading和awgn计算
 5. 去掉GI
 6. 做FFT转为频域讯号
-7. Z[m]=R[m]*H^(*)[m] 
+7. Z[m]=R[m]*H^(*)[m]; 时域的卷积r=z卷h  =>  频域的乘法 R=Z*H; 然后除法 等效为 乘以共轭; Z=R*(^H)
 8. 计算BER
 
