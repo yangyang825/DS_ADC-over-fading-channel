@@ -13,11 +13,12 @@
 /* Parameters                                              */
 /*---------------------------------------------------------*/
 
-#define LOOPN		10000
+#define LOOPN		100
 /*----------运算----------*/
 #define sqr(x)				((x)*(x))
 #define DIM			100
-
+/*----------channel----------*/
+#define HLOOP		100
 /*----------transmitter----------*/
 #define POINT_N		(64) //信号数量
 #define BITN		(POINT_N * 2)		//QPSK调制，信号对应的bit数量为信号数的两倍
@@ -27,7 +28,7 @@
 #define	GI			0//(OFDM_N/4)				/* Guard interval */
 #define subcar_N	1024				//FFT信号个数
 #define OFDM_N     	(subcar_N)//1024          //OFDM信号个数
-#define trans_N		(OFDM_N+GI)//1024+1024/4
+//#define trans_N		(OFDM_N+GI)//1024+1024/4
 #define pilot_real   OneBySqrt2//1//能量为1 
 #define pilot_image  OneBySqrt2//0//
 /*----------freSel_fading----------*/
@@ -60,10 +61,14 @@ void oversampling_GI(Complex(*modulated_signal), Complex(*transmitted_signal));
 	void IFFT(Complex(*FFT_signal), Complex(*OFDM_signal));
 	void overSampling(Complex(*modulated_signal), Complex(*OFDM_signal));
 	void addGI(Complex (*OFDM_signal), Complex(*transmitted_signal));
-void estimateH(Complex(*H));
+void estimateH(Complex(*H),Complex(*h1),Complex(*h2));
 void awgn(Complex(*input_signal), Complex(*output_signal));
 
-void freSel_fading(Complex(*input), Complex(*output));
+void generateTrueFading(Complex(*h1),Complex(*h2));
+	double PHI();
+	void Doppler(Complex(*h));
+	void setPopagation(Complex(*h));
+void freSel_fading(Complex(*input), Complex(*output), Complex(*h1), Complex(*h2));
 
 void removeGI(Complex(*signal), Complex(*output_signal));
 

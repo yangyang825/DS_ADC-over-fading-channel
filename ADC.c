@@ -9,7 +9,6 @@ void ADC(Complex(*received_signal), Complex(*estimated_signal))
 	for (int i = 0; i < OFDM_N; i++)
 	{
 		estimated_signal[i].real = estimate(&received_signal[i].real);
-		//printf("i=%d, estimated_signal = %lf   received_signal=%lf \n", i, estimated_signal[i], received_signal[i].real);
 		estimated_signal[i].image = 0;
 	}
 }
@@ -40,8 +39,6 @@ double estimate(double *realSignal)
 		bitStream[j] = 0;
 		delta = *realSignal - DACoutput;
 		sumOfDelta += delta;
-		//printf("delta = %f\n", delta);
-		//printf("sumOfDelta = %lf\n", sumOfDelta);
 
 		if (sumOfDelta >= 0)
 		{
@@ -53,8 +50,6 @@ double estimate(double *realSignal)
 			bitStream[j] = 0;
 			DACoutput = -Vref;
 		}
-		//printf("%d\n", bitStream[j]);
-		//printf("DACoutput_signal = %lf\n", DACoutput);
 		estimated_signal += DACoutput;
 //		free(bitStream);
 	}

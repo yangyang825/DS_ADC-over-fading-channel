@@ -12,13 +12,12 @@ void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H));
 *   5. 去掉GI
 *   6. 做FFT转为频域讯号
 *	7. received_pilot[i]/pilot[i] = H[i]
-*	8. 最后获得H[i]的共轭, 用于后续传输的OFDM讯号估计信道 Z[m]=R[m]*H^(*)[m] 
+*	8. 最后获得H[i], 用于后续传输的OFDM讯号估计信道 Z[m]=R[m]*H^(*)[m] 
 */
-void estimateH(Complex(*H)){
+void estimateH(Complex(*H),Complex(*h1),Complex(*h2)){
 
-	Complex *pilots, *IFFTPilots;
-	pilots = (Complex*)malloc(sizeof(Complex)*subcar_N);
-	IFFTPilots = (Complex*)malloc(sizeof(Complex)*OFDM_N);
+	Complex *pilots;
+	pilots = (Complex*)malloc(sizeof(Complex)*POINT_N);
 	Complex *IFFTPilotsAndGI;
 	IFFTPilotsAndGI = (Complex*)malloc(sizeof(Complex)*(OFDM_N+GI));
 	Complex *receivedIFFTPilots;
@@ -29,19 +28,14 @@ void estimateH(Complex(*H)){
 	estimatedPilots = (Complex*)malloc(sizeof(Complex)*(OFDM_N));
 	
 	generatePilots(pilots);
-	IFFT(pilots, IFFTPilots);
-	for(int i=0; i<OFDM_N+GI; i++){
-//		printf("%d, %lf+%lf\n", i, IFFTPilots[i].real, IFFTPilots[i].image);
-	}
-	addGI(IFFTPilots, IFFTPilotsAndGI);
-	freSel_fading(IFFTPilotsAndGI, IFFTPilotsAndGI);
+	oversampling_GI(pilots, IFFTPilotsAndGI);
+	freSel_fading(IFFTPilotsAndGI, IFFTPilotsAndGI, h1, h2); 
+//	awgn(IFFTPilotsAndGI, IFFTPilotsAndGI);
 	removeGI(IFFTPilotsAndGI, receivedIFFTPilots);
 	ADC(receivedIFFTPilots, estimatedIFFTPilots);//ADC只对实部做操作, 所以输出estimatedFFTPilots是double []类型 
-	FFT(estimatedIFFTPilots, estimatedPilots);
+	FFT(estimatedIFFTPilots, estimatedPilots);//[]
 	generateH(estimatedPilots, pilots, H);
-
 	free(pilots);
-	free(IFFTPilots);
 	free(IFFTPilotsAndGI);
 	free(receivedIFFTPilots);
 	free(estimatedIFFTPilots);
@@ -50,10 +44,11 @@ void estimateH(Complex(*H)){
 
 void generatePilots(Complex(*pilots))
 {
-	for (int i = 0; i < subcar_N; i++)
+	for (int i = 0; i < POINT_N; i++)
 	{
 	    pilots[i] = generateOnePilot();
 	}
+	
 }
 Complex generateOnePilot()
 {
@@ -79,6 +74,5 @@ void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H))
 {
 	for(int i=0; i<subcar_N; i++){
 		H[i] = ComplexDivision(estimatedPilots[i], pilots[i]);
-//		printf("%d, %lf+%lfj\n",i, H[i].real, H[i].image);
 	}
 }

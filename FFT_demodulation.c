@@ -45,13 +45,14 @@ void FFT(Complex(*estimated_signal), Complex(*recovered_signal))
 
             recovered_signal[n].real = recovered_signal[n].real + temp_signal[k].real;
             recovered_signal[n].image = recovered_signal[n].image + temp_signal[k].image;
-        }     
+        }
+//        printf("%d, FFT INPUT = %lf+%lf\n", n, estimated_signal[n].real, estimated_signal[n].image);
+//		printf("%d, FFT OUTPUT = %lf+%lf\n", n, recovered_signal[n].real, recovered_signal[n].image); // 1...........2.CHANNEL
     }
 }
 
 void clearHimpact(Complex(*recovered_signal), Complex(*H))
 {
-	//printf("estimated_HΪ:%lf\n",estiH);
 	for(int i=1; i<OFDM_N; i++){
 		recovered_signal[i] = ComplexMulti(recovered_signal[i], ComplexConjugate(H[i]));
 	}

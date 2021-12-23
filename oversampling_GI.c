@@ -15,7 +15,6 @@ void oversampling_GI (Complex (*modulated_signal),  Complex(*transmitted_signal)
         OFDM_signal[i].image = 0;
     }
     overSampling(modulated_signal, OFDM_signal);
-    
     addGI(OFDM_signal, transmitted_signal);
 }
 //	overSampling
@@ -29,10 +28,7 @@ void overSampling (Complex (*modulated_signal), Complex (*OFDM_signal))
         FFT_signal[i].real = 0;
         FFT_signal[i].image = 0;
     }
-    /* 信道估计: 在IFFT之前, 插入导频 */
-    FFT_signal[0].real = pilot_real;
-    FFT_signal[0].image = pilot_image;
-    
+
     //OVERSAMPLING步骤1：把POINT_N放到subcar_N的一边中间位置，然后对称位置为共轭，以满足oversampling条件；最后其他部分补0 
 	/* oversampling之前, 初始化共轭信号 */
     Complex* conjugate_signal;
@@ -81,7 +77,6 @@ void addGI(Complex(*OFDM_signal), Complex(*transmitted_signal))
     for (n = GI; n < OFDM_N; n++)
     {
         transmitted_signal[n] = OFDM_signal[n - GI];
-//        printf("%d, transmitted_signal=%lf+%lf", n, transmitted_signal[n].real, transmitted_signal[n].image);
     }
 }
 

@@ -18,7 +18,7 @@ void ber(int loop, int(*tbit), int(*rbit)) {
     }
     Pe = (double)error / (double)BITN;
     AverageBER += (double)Pe / LOOPN;
-    if(loop%100 == 0) {
+    if(loop%10 == 0) {
     	    printf("%d次循环时候的结果为: Eb/N0 = %f, %e\t%e\n", loop, (CNR - 3.0), Pe, AverageBER);
 	} 
 
