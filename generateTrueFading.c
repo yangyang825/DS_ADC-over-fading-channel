@@ -62,7 +62,7 @@ void Doppler(Complex(*h))
         {
             hn[i] = ComplexMulti(An, Exp(2 * PI * Fd * cos(thetan) * i * Ts + phin));
         }
-        for (j = 0; j < (OFDM_N+GI); j++)
+        for (j = 0; j < (OFDM_N+GI); j++)//..............constant not h[i]
         {
             h[j].real = h[j].real + hn[j].real;
             h[j].image = h[j].image + hn[j].image;

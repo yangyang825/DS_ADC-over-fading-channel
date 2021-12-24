@@ -6,7 +6,7 @@ double estimate(double* realSignal);
 void ADC(Complex(*received_signal), Complex(*estimated_signal))
 {
 
-	for (int i = 0; i < OFDM_N; i++)
+	for (int i = 0; i < OFDM_N+GI; i++)
 	{
 		estimated_signal[i].real = estimate(&received_signal[i].real);
 		estimated_signal[i].image = 0;

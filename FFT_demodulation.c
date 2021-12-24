@@ -11,14 +11,18 @@ void FFT_demodulation(Complex(*estimated_signal), Complex(*H), int(*received_bit
     QPSK_signal = (Complex*)malloc(sizeof(Complex) * POINT_N);
     //1. 做FFT转为频域信号
 	FFT(estimated_signal,recovered_signal);	
-	//2. 清除H影响
-    clearHimpact(recovered_signal, H);
-	//3. 从recovered_signal(1024个FFT频域), 择出64个QPSK讯号 
+//	for(int i=0;i<OFDM_N;i++){
+//		printf("%d, recovered_signal = %lf+%lf\n", i, recovered_signal[i].real, recovered_signal[i].image);
+//	} 
+
+	//2. 从recovered_signal(1024个FFT频域), 择出64个QPSK讯号 
     /* recovered_signal: [0,349)=0, [349, 412]=调制信号, (412-512-612)=0, [612,675]=调制信号, (675,1023]=0 */
     for (int i = 0; i < POINT_N; i++) {
         QPSK_signal[i].real = recovered_signal[612+i].real;
         QPSK_signal[i].image = recovered_signal[612+i].image;
     }
+    //3. 清除H影响
+    clearHimpact(QPSK_signal, H);
 	//4. 反QPSK调制 
     demodulation(QPSK_signal, received_bit);
 
@@ -54,7 +58,9 @@ void FFT(Complex(*estimated_signal), Complex(*recovered_signal))
 void clearHimpact(Complex(*recovered_signal), Complex(*H))
 {
 	for(int i=1; i<OFDM_N; i++){
+//		printf("%d, clearHimpact前recovered_signal = %lf+%lf\n", i, recovered_signal[i].real, recovered_signal[i].image);
 		recovered_signal[i] = ComplexMulti(recovered_signal[i], ComplexConjugate(H[i]));
+//		printf("%d, clearHimpact之后recovered_signal = %lf+%lf\n", i, recovered_signal[i].real, recovered_signal[i].image);
 	}
 }
 

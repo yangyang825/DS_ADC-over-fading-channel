@@ -16,30 +16,40 @@ void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H));
 */
 void estimateH(Complex(*H),Complex(*h1),Complex(*h2)){
 
-	Complex *pilots;
-	pilots = (Complex*)malloc(sizeof(Complex)*POINT_N);
+	Complex *QPSKPilots;
 	Complex *IFFTPilotsAndGI;
-	IFFTPilotsAndGI = (Complex*)malloc(sizeof(Complex)*(OFDM_N+GI));
 	Complex *receivedIFFTPilots;
-	receivedIFFTPilots = (Complex*)malloc(sizeof(Complex)*(OFDM_N));
-	Complex *estimatedIFFTPilots;
-	estimatedIFFTPilots = (Complex*)malloc(sizeof(Complex)*(OFDM_N));
-	Complex *estimatedPilots;
-	estimatedPilots = (Complex*)malloc(sizeof(Complex)*(OFDM_N));
+	Complex *estimatedIFFTPilotsAndGI,*FFTPilots;
+	Complex *estimatedQPSKPilots;
 	
-	generatePilots(pilots);
-	oversampling_GI(pilots, IFFTPilotsAndGI);
+	QPSKPilots = (Complex*)malloc(sizeof(Complex)*POINT_N);
+	IFFTPilotsAndGI = (Complex*)malloc(sizeof(Complex)*(OFDM_N+GI));
+	estimatedIFFTPilotsAndGI = (Complex*)malloc(sizeof(Complex)*(OFDM_N+GI));
+	receivedIFFTPilots = (Complex*)malloc(sizeof(Complex)*(OFDM_N));
+	FFTPilots = (Complex*)malloc(sizeof(Complex)*(OFDM_N));
+	estimatedQPSKPilots = (Complex*)malloc(sizeof(Complex)*(POINT_N));
+	
+	generatePilots(QPSKPilots);
+	oversampling_GI(QPSKPilots, IFFTPilotsAndGI);
 	freSel_fading(IFFTPilotsAndGI, IFFTPilotsAndGI, h1, h2); 
 //	awgn(IFFTPilotsAndGI, IFFTPilotsAndGI);
-	removeGI(IFFTPilotsAndGI, receivedIFFTPilots);
-	ADC(receivedIFFTPilots, estimatedIFFTPilots);//ADC只对实部做操作, 所以输出estimatedFFTPilots是double []类型 
-	FFT(estimatedIFFTPilots, estimatedPilots);//[]
-	generateH(estimatedPilots, pilots, H);
-	free(pilots);
-	free(IFFTPilotsAndGI);
-	free(receivedIFFTPilots);
-	free(estimatedIFFTPilots);
-	free(estimatedPilots);
+	ADC(IFFTPilotsAndGI, estimatedIFFTPilotsAndGI);
+	removeGI(estimatedIFFTPilotsAndGI, receivedIFFTPilots);
+	FFT(receivedIFFTPilots, FFTPilots);//都长为OFDM_N 
+	filter(FFTPilots, estimatedQPSKPilots);
+	generateH(estimatedQPSKPilots, QPSKPilots, H);
+	
+	for (int i = 0; i < OFDM_N; i++)
+	{
+	  printf("%d, IFFTPilotsAndGI = %lf+%lf\n", i, IFFTPilotsAndGI[i].real, IFFTPilotsAndGI[i].image);
+	  printf("%d, estimatedIFFTPilotsAndGI = %lf+%lf\n", i, estimatedIFFTPilotsAndGI[i].real, estimatedIFFTPilotsAndGI[i].image);
+	}
+	
+//	free(QPSKPilots);
+//	free(IFFTPilotsAndGI);
+//	free(receivedIFFTPilots);
+//	free(estimatedIFFTPilots);
+//	free(estimatedQPSKPilots);
 }
 
 void generatePilots(Complex(*pilots))
@@ -70,9 +80,10 @@ Complex generateOnePilot()
 
   return pilot;
 }
-void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H))
+void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H))//.......
 {
-	for(int i=0; i<subcar_N; i++){
+	for(int i=0; i<POINT_N; i++){
 		H[i] = ComplexDivision(estimatedPilots[i], pilots[i]);
+		
 	}
 }

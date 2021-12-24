@@ -18,14 +18,14 @@
 #define sqr(x)				((x)*(x))
 #define DIM			100
 /*----------channel----------*/
-#define HLOOP		100
+#define HLOOP		1
 /*----------transmitter----------*/
 #define POINT_N		(64) //信号数量
 #define BITN		(POINT_N * 2)		//QPSK调制，信号对应的bit数量为信号数的两倍
 #define PI			3.141592654		//acos(-1.0)
 #define OneBySqrt2	0.7071067812	//1.0/sqrt(2.0)
 /*----------生成OFDM信号----------*/
-#define	GI			0//(OFDM_N/4)				/* Guard interval */
+#define	GI			(OFDM_N/4)				/* Guard interval */
 #define subcar_N	1024				//FFT信号个数
 #define OFDM_N     	(subcar_N)//1024          //OFDM信号个数
 //#define trans_N		(OFDM_N+GI)//1024+1024/4
@@ -34,7 +34,7 @@
 /*----------freSel_fading----------*/
 #define ORIGINALTHETA         0
 #define Fd                    0
-#define D                     0
+#define D                     2//.................
 /*................用统一符号表示...................*/
 #define SYMBOL_RATE			42.0e3
 #define Ts					(1.0/SYMBOL_RATE)
@@ -47,7 +47,7 @@
 /*----------statistic/ber----------*/
 #define FILENAME			".\\data\\awgn.dat"
  
-
+#define REALHFILE			"realH.csv"
 
 /*---------------------------------------------------------*/
 /* Subfunctions                                            */
@@ -79,4 +79,7 @@ void FFT_demodulation(Complex(*estimated_signal), Complex(*H), int(*received_bit
 	void clearHimpact(Complex(*recovered_signal), Complex(*H));
 	void demodulation(Complex(*signal), int(*received_bit));
 
-void ber(int loop, int(*tbit), int(*rbit));
+void ber(int loop, int(*tbit), int(*rbit), double(*ber_i));
+
+void getConvolution( Complex(*h1), Complex(*h2), Complex(*convolutionH));
+void filter(Complex(*recovered_signal), Complex(*QPSK_signal));
