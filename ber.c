@@ -23,6 +23,7 @@ void ber(int loop, int(*tbit), int(*rbit), double(*ber_i)) {
     
     if (loop == LOOPN - 1) {
         //     FILE* file;
+        printf("22222222222222\n");
         printf("loop=LOOPN-1µÄBER: Eb/N0 = %f, ber_i = %e\n", (CNR - 3.0), *ber_i);
         // printf("%f   %e\n", (CNR - 3.0), AverageBER);
         //      fopen_s(&file, "data2.txt", "a");

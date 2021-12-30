@@ -4,86 +4,73 @@ Complex generateOnePilot();
 void generatePilots(Complex(*pilots));
 void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H));
 /*
-*params: H---Í¨¹ýÕâ×épilot»ñµÃ,ÓÃÓÚºóÐøOFDMÐÅºÅµÄH 
-*	1. ÆµÓòÉÏÉú³É1024¸öpilot 
-*	2. pilots×öIFFT±äÎªÊ±ÓòÑ¶ºÅ
-*	3. ¼ÓÉÏGI 
-*   4. Ê±ÓòÑ¶ºÅÉÏ¼ÓfadingºÍawgn¼ÆËã
-*   5. È¥µôGI
-*   6. ×öFFT×ªÎªÆµÓòÑ¶ºÅ
-*	7. received_pilot[i]/pilot[i] = H[i]
-*	8. ×îºó»ñµÃH[i], ÓÃÓÚºóÐø´«ÊäµÄOFDMÑ¶ºÅ¹À¼ÆÐÅµÀ Z[m]=R[m]*H^(*)[m] 
-*/
-void estimateH(Complex(*H),Complex(*h1),Complex(*h2)){
+ *params: H---Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pilotï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½OFDMï¿½ÅºÅµï¿½H
+ *	1. Æµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1024ï¿½ï¿½pilot
+ *	2. pilotsï¿½ï¿½IFFTï¿½ï¿½ÎªÊ±ï¿½ï¿½Ñ¶ï¿½ï¿½
+ *	3. ï¿½ï¿½ï¿½ï¿½GI
+ *   4. Ê±ï¿½ï¿½Ñ¶ï¿½ï¿½ï¿½Ï¼ï¿½fadingï¿½ï¿½awgnï¿½ï¿½ï¿½ï¿½
+ *   5. È¥ï¿½ï¿½GI
+ *   6. ï¿½ï¿½FFT×ªÎªÆµï¿½ï¿½Ñ¶ï¿½ï¿½
+ *	7. received_pilot[i]/pilot[i] = H[i]
+ *	8. ï¿½ï¿½ï¿½ï¿½ï¿½H[i], ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½OFDMÑ¶ï¿½Å¹ï¿½ï¿½ï¿½ï¿½Åµï¿½ Z[m]=R[m]*H^(*)[m]
+ */
+void estimateH(Complex(*H), Complex(h1), Complex(h2))
+{
 
-	Complex *QPSKPilots;
-	Complex *IFFTPilotsAndGI;
-	Complex *receivedIFFTPilots;
-	Complex *estimatedIFFTPilotsAndGI,*FFTPilots;
-	Complex *estimatedQPSKPilots;
-	
-	QPSKPilots = (Complex*)malloc(sizeof(Complex)*POINT_N);
-	IFFTPilotsAndGI = (Complex*)malloc(sizeof(Complex)*(OFDM_N+GI));
-	estimatedIFFTPilotsAndGI = (Complex*)malloc(sizeof(Complex)*(OFDM_N+GI));
-	receivedIFFTPilots = (Complex*)malloc(sizeof(Complex)*(OFDM_N));
-	FFTPilots = (Complex*)malloc(sizeof(Complex)*(OFDM_N));
-	estimatedQPSKPilots = (Complex*)malloc(sizeof(Complex)*(POINT_N));
-	
-	generatePilots(QPSKPilots);
-	oversampling_GI(QPSKPilots, IFFTPilotsAndGI);
-	freSel_fading(IFFTPilotsAndGI, IFFTPilotsAndGI, h1, h2); 
-//	awgn(IFFTPilotsAndGI, IFFTPilotsAndGI);
-	ADC(IFFTPilotsAndGI, estimatedIFFTPilotsAndGI);
-	removeGI(estimatedIFFTPilotsAndGI, receivedIFFTPilots);
-	FFT(receivedIFFTPilots, FFTPilots);//¶¼³¤ÎªOFDM_N 
-	filter(FFTPilots, estimatedQPSKPilots);
-	generateH(estimatedQPSKPilots, QPSKPilots, H);
-	
-	for (int i = 0; i < OFDM_N; i++)
-	{
-	  printf("%d, IFFTPilotsAndGI = %lf+%lf\n", i, IFFTPilotsAndGI[i].real, IFFTPilotsAndGI[i].image);
-	  printf("%d, estimatedIFFTPilotsAndGI = %lf+%lf\n", i, estimatedIFFTPilotsAndGI[i].real, estimatedIFFTPilotsAndGI[i].image);
-	}
-	
-//	free(QPSKPilots);
-//	free(IFFTPilotsAndGI);
-//	free(receivedIFFTPilots);
-//	free(estimatedIFFTPilots);
-//	free(estimatedQPSKPilots);
+  Complex QPSKPilots[POINT_N], IFFTPilots[OFDM_N], IFFTPilotsAndGI[OFDM_N + GI];                               // transmitter used variables
+  Complex receivedIFFTPilotsAndGI[OFDM_N + GI], ADCOutputIFFTPilotsAndGI[OFDM_N + GI], IFFTPilotsNoGI[OFDM_N]; // receiver used variables
+  Complex *FFTPilots;                                                                                          // demodulator used variables
+  Complex *receivedQPSKPilots;
+
+  generatePilots(QPSKPilots);
+  oversampling_GI(QPSKPilots, IFFTPilotsAndGI);
+  freSel_fading(IFFTPilotsAndGI, receivedIFFTPilotsAndGI, h1, h2);
+  // awgn(IFFTPilotsAndGI, IFFTPilotsAndGI);
+  // ADC(IFFTPilotsAndGI, estimatedIFFTPilotsAndGI);
+  removeGI(receivedIFFTPilotsAndGI, IFFTPilotsNoGI);
+  FFT(IFFTPilotsNoGI, FFTPilots); 
+  filter(FFTPilots, receivedQPSKPilots);
+  generateH(receivedQPSKPilots, QPSKPilots, H);
+
+  //	for(int i=0; i<POINT_N; i++){
+  //		printf("%d\tpilots before fading: QPSKPilots=%lf+%lf\t\n", i, QPSKPilots[i].real, QPSKPilots[i].image);
+  ////		printf("%d\tpilots after fading: IFFTPilotsAndGI=%lf+%lf\t\n", i, IFFTPilotsAndGI[612+i].real, IFFTPilotsAndGI[612+i].image);
+  //		printf("%d\tpilots when estimate H: estimatedQPSKPilots=%lf + %lf\n", i, estimatedQPSKPilots[i].real, estimatedQPSKPilots[i].image);
+  //	}
 }
 
 void generatePilots(Complex(*pilots))
 {
-	for (int i = 0; i < POINT_N; i++)
-	{
-	    pilots[i] = generateOnePilot();
-	}
-	
+  for (int i = 0; i < POINT_N; i++)
+  {
+    pilots[i] = generateOnePilot();
+  }
 }
 Complex generateOnePilot()
 {
-  	int rand1, rand2, symbol;
-  	int bin2sym[2][2] = {
-		{0, 1},
-		{3, 2}};
-  	double sym2sgnl[4][2] = {
-		{OneBySqrt2, OneBySqrt2},
-		{-OneBySqrt2, OneBySqrt2},
-		{-OneBySqrt2, -OneBySqrt2},
-		{OneBySqrt2, -OneBySqrt2}};
-	rand1 = rand() & 0x1;
-	rand2 = rand() & 0x1;
-	symbol = bin2sym[rand1][rand2];
-	Complex pilot;
-	pilot.real = sym2sgnl[symbol][0];
-	pilot.image = sym2sgnl[symbol][1];
+  int rand1, rand2, symbol;
+  int bin2sym[2][2] = {
+      {0, 1},
+      {3, 2}};
+  double sym2sgnl[4][2] = {
+      {OneBySqrt2, OneBySqrt2},
+      {-OneBySqrt2, OneBySqrt2},
+      {-OneBySqrt2, -OneBySqrt2},
+      {OneBySqrt2, -OneBySqrt2}};
+  rand1 = rand() & 0x1;
+  rand2 = rand() & 0x1;
+  symbol = bin2sym[rand1][rand2];
+  Complex pilot;
+  pilot.real = sym2sgnl[symbol][0];
+  pilot.image = sym2sgnl[symbol][1];
 
   return pilot;
 }
-void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H))//.......
+void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H))
 {
-	for(int i=0; i<POINT_N; i++){
-		H[i] = ComplexDivision(estimatedPilots[i], pilots[i]);
-		
-	}
+
+  for (int i = 0; i < POINT_N; i++)
+  {
+    H[i] = ComplexDivision(estimatedPilots[i], pilots[i]);
+  }
 }

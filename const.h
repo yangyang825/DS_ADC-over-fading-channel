@@ -13,41 +13,39 @@
 /* Parameters                                              */
 /*---------------------------------------------------------*/
 
-#define LOOPN		100
-/*----------ÔËËã----------*/
-#define sqr(x)				((x)*(x))
-#define DIM			100
+#define LOOPN 100
+/*----------ï¿½ï¿½ï¿½ï¿½----------*/
+#define sqr(x) ((x) * (x))
+#define DIM 100
 /*----------channel----------*/
-#define HLOOP		1
+#define HLOOP 10
 /*----------transmitter----------*/
-#define POINT_N		(64) //ÐÅºÅÊýÁ¿
-#define BITN		(POINT_N * 2)		//QPSKµ÷ÖÆ£¬ÐÅºÅ¶ÔÓ¦µÄbitÊýÁ¿ÎªÐÅºÅÊýµÄÁ½±¶
-#define PI			3.141592654		//acos(-1.0)
-#define OneBySqrt2	0.7071067812	//1.0/sqrt(2.0)
-/*----------Éú³ÉOFDMÐÅºÅ----------*/
-#define	GI			(OFDM_N/4)				/* Guard interval */
-#define subcar_N	1024				//FFTÐÅºÅ¸öÊý
-#define OFDM_N     	(subcar_N)//1024          //OFDMÐÅºÅ¸öÊý
+#define POINT_N 64              //(1024)// //ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½
+#define BITN (POINT_N * 2)      // QPSKï¿½ï¿½ï¿½Æ£ï¿½ï¿½ÅºÅ¶ï¿½Ó¦ï¿½ï¿½bitï¿½ï¿½ï¿½ï¿½Îªï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define PI 3.141592654          // acos(-1.0)
+#define OneBySqrt2 0.7071067812 // 1.0/sqrt(2.0)
+/*----------ï¿½ï¿½ï¿½ï¿½OFDMï¿½Åºï¿½----------*/
+#define GI (OFDM_N / 4)   /* Guard interval */
+#define subcar_N 1024     // FFTï¿½ÅºÅ¸ï¿½ï¿½ï¿½
+#define OFDM_N (subcar_N) // 1024          //OFDMï¿½ÅºÅ¸ï¿½ï¿½ï¿½
 //#define trans_N		(OFDM_N+GI)//1024+1024/4
-#define pilot_real   OneBySqrt2//1//ÄÜÁ¿Îª1 
-#define pilot_image  OneBySqrt2//0//
+#define pilot_real OneBySqrt2  // 1//ï¿½ï¿½ï¿½ï¿½Îª1
+#define pilot_image OneBySqrt2 // 0//
 /*----------freSel_fading----------*/
-#define ORIGINALTHETA         0
-#define Fd                    0
-#define D                     2//.................
-/*................ÓÃÍ³Ò»·ûºÅ±íÊ¾...................*/
-#define SYMBOL_RATE			42.0e3
-#define Ts					(1.0/SYMBOL_RATE)
-#define fs2					1024000/Ts
-#define fs1					Ts/OFDM_N
+#define ORIGINALTHETA 0
+#define Fd 0
+#define D 2 //.................
+/*................ï¿½ï¿½Í³Ò»ï¿½ï¿½ï¿½Å±ï¿½Ê¾...................*/
+#define SYMBOL_RATE 42.0e3
+#define Ts (1.0 / SYMBOL_RATE)
+#define fs2 1024000 / Ts
+#define fs1 Ts / OFDM_N
 
-
-
-#define Vref  (1.0);	//|Vref|>Math.max(received_signal[i].real)
+#define Vref (1.0); //|Vref|>Math.max(received_signal[i].real)
 /*----------statistic/ber----------*/
-#define FILENAME			".\\data\\awgn.dat"
- 
-#define REALHFILE			"realH.csv"
+#define FILENAME ".\\data\\awgn.dat"
+
+#define REALHFILE "realH.csv"
 
 /*---------------------------------------------------------*/
 /* Subfunctions                                            */
@@ -58,28 +56,28 @@
 void transmitter(int(*bit), Complex(*signal));
 
 void oversampling_GI(Complex(*modulated_signal), Complex(*transmitted_signal));
-	void IFFT(Complex(*FFT_signal), Complex(*OFDM_signal));
-	void overSampling(Complex(*modulated_signal), Complex(*OFDM_signal));
-	void addGI(Complex (*OFDM_signal), Complex(*transmitted_signal));
-void estimateH(Complex(*H),Complex(*h1),Complex(*h2));
+void IFFT(Complex(*FFT_signal), Complex(*OFDM_signal));
+void overSampling(Complex(*modulated_signal), Complex(*OFDM_signal));
+void addGI(Complex(*OFDM_signal), Complex(*transmitted_signal));
+void estimateH(Complex(*H), Complex(h1), Complex(h2));
 void awgn(Complex(*input_signal), Complex(*output_signal));
 
-void generateTrueFading(Complex(*h1),Complex(*h2));
-	double PHI();
-	void Doppler(Complex(*h));
-	void setPopagation(Complex(*h));
-void freSel_fading(Complex(*input), Complex(*output), Complex(*h1), Complex(*h2));
+void generateTrueFading(Complex(*h1), Complex(*h2));
+double PHI();
+void Doppler(Complex(*h));
+void setPopagation(Complex(*h));
+void freSel_fading(Complex(*input), Complex(*output), Complex(h1), Complex(h2));
 
 void removeGI(Complex(*signal), Complex(*output_signal));
 
 void ADC(Complex(*received_signal), Complex(*estimated_signal));
 
 void FFT_demodulation(Complex(*estimated_signal), Complex(*H), int(*received_bit));
-	void FFT(Complex(*estimated_signal), Complex(*recovered_signal));
-	void clearHimpact(Complex(*recovered_signal), Complex(*H));
-	void demodulation(Complex(*signal), int(*received_bit));
+void FFT(Complex(*estimated_signal), Complex(*recovered_signal));
+void clearHimpact(Complex(*recovered_signal), Complex(*H));
+void demodulation(Complex(*signal), int(*received_bit));
 
 void ber(int loop, int(*tbit), int(*rbit), double(*ber_i));
 
-void getConvolution( Complex(*h1), Complex(*h2), Complex(*convolutionH));
+void getConvolution(Complex(h1), Complex(h2), Complex(*convolutionH));
 void filter(Complex(*recovered_signal), Complex(*QPSK_signal));

@@ -57,7 +57,7 @@ void FFT(Complex(*estimated_signal), Complex(*recovered_signal))
 
 void clearHimpact(Complex(*recovered_signal), Complex(*H))
 {
-	for(int i=1; i<OFDM_N; i++){
+	for(int i=1; i<POINT_N; i++){
 //		printf("%d, clearHimpactÇ°recovered_signal = %lf+%lf\n", i, recovered_signal[i].real, recovered_signal[i].image);
 		recovered_signal[i] = ComplexMulti(recovered_signal[i], ComplexConjugate(H[i]));
 //		printf("%d, clearHimpactÖ®ºórecovered_signal = %lf+%lf\n", i, recovered_signal[i].real, recovered_signal[i].image);

@@ -74,9 +74,9 @@ void addGI(Complex(*OFDM_signal), Complex(*transmitted_signal))
     {
         transmitted_signal[n] = OFDM_signal[n + GI*3];
     }
-    for (n = GI; n < OFDM_N; n++)
+    for (n = GI; n < OFDM_N+GI; n++)
     {
-        transmitted_signal[n] = OFDM_signal[n - GI];
+        transmitted_signal[n] = OFDM_signal[n-GI];
     }
 }
 

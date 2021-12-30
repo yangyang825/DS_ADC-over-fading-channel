@@ -7,72 +7,70 @@
 
 double CNR;
 int Eb_N0;
-//	loop: ÖØ¸´´ÎÊı£» Eb_N0£º1bitº¬Á¿µÄĞÅºÅµÄÄÜÁ¿ Óë ÔëÒôÃÜ¶ÈµÄ±ÈÖµ
-int transmitted_bit[BITN], received_bit[BITN];
 
-Complex modulated_signal[POINT_N], transmitted_signal[OFDM_N + GI];
+int transmitted_bit[BITN], received_bit[BITN];
+Complex modulated_signal[POINT_N], OFDM_signal[OFDM_N], transmitted_signal[OFDM_N + GI];
 Complex received_signal[OFDM_N + GI], estimated_signalAndGI[OFDM_N + GI];
 Complex estimated_signal[OFDM_N];
-Complex H[POINT_N];//ĞÅµÀ¹À¼Æ-ÆµÓòÉÏµÄH
-Complex h1[OFDM_N+GI]; //ÕæÊµfading-Ê±ÓòÉÏµÄh 
-Complex h2[OFDM_N+GI]; 
-
+Complex H[POINT_N]; // channelEstimationè·å¾—çš„H
+Complex h1, h2;     //çœŸå®fadingæ—¶åŸŸçš„è¡°è½
 
 double SSE = 0;
 double MSE = 0;
 double AverageBER = 0;
 double ber_i = 0;
 
-int index = 0;//delete
 int main()
 {
-	srand((unsigned)time(NULL));//randº¯Êı±Ø±¸£¬Éú³ÉËæ»úÊı
-	
-	for(Eb_N0=20; Eb_N0<30; Eb_N0++){
-		CNR = (double)Eb_N0 + 3.0;
-    	for(int hloop=0; hloop<HLOOP; hloop++)
-		{
-			system("pause");
-//    		generateTrueFading(h1, h2);
-			for(int i = 0;i<OFDM_N+GI;i++){
-				h1[i].real = 1;
-				h1[i].image = 0;
-				h2[i].real = 0.5;
-				h2[i].image = 0;
-			} 
-    		estimateH(H,h1,h2);
-    		for(int i=0;i<POINT_N;i++){
-    			printf("H = %lf+%lf\n", H[i].real, H[i].image);
-			} 
-    		
-//    		getConvolution(h1,h2,H);//ÀíÂÛH 
+  srand((unsigned)time(NULL)); // randå‡½æ•°å¿…éœ€
 
-			for(int loop=0; loop<LOOPN; loop++)
-			{
-				transmitter(transmitted_bit, modulated_signal);
-				oversampling_GI(modulated_signal, transmitted_signal);
-//				awgn(transmitted_signal,transmitted_signal);
-				freSel_fading(transmitted_signal, received_signal, h1, h2);//CHANNEL
-				ADC(received_signal, estimated_signalAndGI);
-				removeGI(estimated_signalAndGI, estimated_signal);
-				
-//				for(int i=0;i<POINT_N;i++){
-//					printf("%d, modulated_signal = %lf+%lf\n", i, modulated_signal[i].real, modulated_signal[i].image);
-//					printf("%d, estimated_signal = %lf+%lf\n", i, estimated_signal[i].real, estimated_signal[i].image);
-//				} 
-				FFT_demodulation(estimated_signal, H, received_bit);
-				
-				ber(loop, transmitted_bit, received_bit, &ber_i);
-				system("pause");
-			 }
-			AverageBER += ber_i/HLOOP;
-			ber_i = 0.0;
-			printf("hloop=HLOOP-1Ê±µÄÆ½¾ùBER: Eb/N0 = %f, AverageBER = %e\n", (CNR - 3.0), AverageBER);
-//			MSE = SSE / (OFDM_N* LOOPN);
-			//printf("MSE %10.8f\n", MSE);	
-		}
-		
-	}
-    return 0;
+  for (Eb_N0 = 10; Eb_N0 < 30; Eb_N0++)
+  {
+    CNR = (double)Eb_N0 + 3.0;
+    for (int hloop = 0; hloop < HLOOP; hloop++)
+    {
+      // system("pause");
+      /*
+       *Initialization
+       */
+      h1.real = 1;
+      h1.image = 0;
+      h2.real = -1;
+      h2.image = 0;
+
+      getConvolution(h1, h2, H); // 
+      estimateH(H, h1, h2);      //
+
+      for (int i = 0; i < POINT_N; i++)
+      {
+        printf("eH[%d]=%lf\t%lf\n", i, H[i].real, H[i].image);
+      }
+      for (int loop = 10; loop < LOOPN; loop++)
+      {
+        system("pause");
+        transmitter(transmitted_bit, modulated_signal);
+        IFFT(modulated_signal, OFDM_signal);
+        addGI(OFDM_signal, transmitted_signal);
+        // oversampling_GI(modulated_signal, transmitted_signal);
+        // awgn(transmitted_signal,transmitted_signal);
+        freSel_fading(transmitted_signal, received_signal, h1, h2); // CHANNEL
+        // ADC(received_signal, estimated_signalAndGI);
+        removeGI(received_signal, estimated_signal);
+        for (int i = 0; i < subcar_N; i++)
+        {
+          // printf("%d, %lf\t%lf\n", i, H[i].real, H[i].image);
+          // printf("i=%d: estimated_signal[i]=%lf+%lf \t transmitted_signal[i]=%lf+%lf\n", i,estimated_signal[i].real, estimated_signal[i].image, transmitted_signal[i+GI].real, transmitted_signal[i+GI].image);
+        }
+        FFT_demodulation(estimated_signal, H, received_bit);
+
+        ber(loop, transmitted_bit, received_bit, &ber_i);
+      }
+      AverageBER += ber_i / HLOOP;
+      ber_i = 0.0;
+      printf("hloop=HLOOP-1Ê±ï¿½ï¿½Æ½ï¿½ï¿½BER: Eb/N0 = %f, AverageBER = %e\n", (CNR - 3.0), AverageBER);
+      // MSE = SSE / (OFDM_N* LOOPN);
+      // printf("MSE %10.8f\n", MSE);
+    }
+  }
+  return 0;
 }
-
