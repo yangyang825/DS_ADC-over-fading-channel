@@ -15,20 +15,6 @@ params: H---信道估计
 9. received_pilot[i]/pilot[i] = H[i]
 10. 最后获得 H[i], 用于后续传输的 OFDM 讯号估计信道 Z[m]=R[m]/H[m]
 
-    Complex aa, aaa, bb, hh, rr, ffff,realh2;
-    aa.real=0.7;
-    aa.image = 0.7;
-    aaa.real = 0.7;
-    aaa.image = -0.7;
-    bb.real = 0.6;
-    bb.image = 0.68;
-    hh = ComplexDivision(bb, aa);
-    rr.real = 0.78; rr.image=-0.69;
-    ffff = ComplexDivision(rr, hh);
-    realh2 = ComplexDivision(rr, aaa);
-    printf("hhhhhhhhhhhhhhhhhhhh=%lf+%lf\n", hh.real, hh.image);
-    printf("realh2=%lf+%lf\n", realh2.real, realh2.image);
-
 ## 中文乱码问题
 
 默认为 ANSI, 部分为 UTF-8, 用 codeblocks 或 notepad 另存为即可

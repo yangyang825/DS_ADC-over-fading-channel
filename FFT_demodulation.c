@@ -1,30 +1,31 @@
 #include "const.h"
-void clearHimpact(Complex(*recovered_signal), Complex(*estimatedH));
-void FFT_demodulation(Complex(*estimated_signal), Complex(*H), int(*received_bit)) {
+
+void FFT_demodulation(Complex(*estimated_signal), Complex(*H), Complex(*modulated_signal))
+{
     Complex* recovered_signal;
     recovered_signal = (Complex*)malloc(sizeof(Complex) * subcar_N);
     for (int i = 0; i < subcar_N; i++) {
         recovered_signal[i].real = 0;
         recovered_signal[i].image = 0;
     }
-    Complex* QPSK_signal;
-    QPSK_signal = (Complex*)malloc(sizeof(Complex) * POINT_N);
-    //1. 做FFT转为频域信号
+    /*
+	*1. First do FFT to obtain signals in frequency domain 
+	*/
 	FFT(estimated_signal,recovered_signal);	
-//	for(int i=0;i<OFDM_N;i++){
-//		printf("%d, recovered_signal = %lf+%lf\n", i, recovered_signal[i].real, recovered_signal[i].image);
-//	} 
-
-	//2. 从recovered_signal(1024个FFT频域), 择出64个QPSK讯号 
-    /* recovered_signal: [0,349)=0, [349, 412]=调制信号, (412-512-612)=0, [612,675]=调制信号, (675,1023]=0 */
+	
+	/*
+	*2. filter-select 64 QPSK modulated signals from 1024 subcarriers
+	*recovered_signal: [0,349)=0, [349, 412]=调制信号, (412-512-612)=0, [612,675]=调制信号, (675,1023]=0
+	*/
     for (int i = 0; i < POINT_N; i++) {
-        QPSK_signal[i].real = recovered_signal[612+i].real;
-        QPSK_signal[i].image = recovered_signal[612+i].image;
+        modulated_signal[i].real = recovered_signal[612+i].real;
+        modulated_signal[i].image = recovered_signal[612+i].image;
     }
-    //3. 清除H影响
-    clearHimpact(QPSK_signal, H);
-	//4. 反QPSK调制 
-    demodulation(QPSK_signal, received_bit);
+    
+    /*
+	*3. Use the estimated H to clear fading impact of Channel and the ADC
+	*/
+    clearHimpact(modulated_signal, H);
 
     free(recovered_signal);
     recovered_signal = NULL;
@@ -64,32 +65,4 @@ void clearHimpact(Complex(*recovered_signal), Complex(*H))
 	}
 }
 
-void demodulation(Complex(*signal), int(*received_bit))
-{
-    //recovered_signal: [0,349)=0, [349, 412]=调制信号, (412-512-612)=0, [612,675]=调制信号, (675,1023]=0
-    int n;
-    for (n = 0; n < POINT_N; n++)
-    {
-        if (signal[n].real > 0 && signal[n].image > 0)
-        {
-            received_bit[2 * n] = 0;
-            received_bit[2 * n + 1] = 0;
-        }
-        else if (signal[n].real < 0 && signal[n].image > 0)
-        {
-            received_bit[2 * n] = 0;
-            received_bit[2 * n + 1] = 1;
 
-        }
-        if (signal[n].real < 0 && signal[n].image < 0)
-        {
-            received_bit[2 * n] = 1;
-            received_bit[2 * n + 1] = 1;
-        }
-        if (signal[n].real > 0 && signal[n].image < 0)
-        {
-            received_bit[2 * n] = 1;
-            received_bit[2 * n + 1] = 0;
-        }
-    }
-}

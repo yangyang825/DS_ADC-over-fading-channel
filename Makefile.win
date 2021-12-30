@@ -4,8 +4,8 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = ADC.o awgn.o ber.o complex.o FFT_demodulation.o main.o matrix.o oversampling_GI.o removeGI.o transmitter.o freSel_fading.o estimateH.o getConvolution.o filter.o
-LINKOBJ  = ADC.o awgn.o ber.o complex.o FFT_demodulation.o main.o matrix.o oversampling_GI.o removeGI.o transmitter.o freSel_fading.o estimateH.o getConvolution.o filter.o
+OBJ      = ADC.o awgn.o ber.o complex.o FFT_demodulation.o main.o matrix.o oversampling_GI.o removeGI.o transmitter.o freSel_fading.o estimateH.o getConvolution.o filter.o QPSK_demodulator.o
+LINKOBJ  = ADC.o awgn.o ber.o complex.o FFT_demodulation.o main.o matrix.o oversampling_GI.o removeGI.o transmitter.o freSel_fading.o estimateH.o getConvolution.o filter.o QPSK_demodulator.o
 LIBS     = -L"C:/ProgramStudy/Dev-Cpp/MinGW64/lib" -L"C:/ProgramStudy/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -g3
 INCS     = -I"C:/ProgramStudy/Dev-Cpp/MinGW64/include" -I"C:/ProgramStudy/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/ProgramStudy/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include"
 CXXINCS  = -I"C:/ProgramStudy/Dev-Cpp/MinGW64/include" -I"C:/ProgramStudy/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"C:/ProgramStudy/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"C:/ProgramStudy/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++"
@@ -65,3 +65,6 @@ getConvolution.o: getConvolution.c
 
 filter.o: filter.c
 	$(CC) -c filter.c -o filter.o $(CFLAGS)
+
+QPSK_demodulator.o: QPSK_demodulator.c
+	$(CC) -c QPSK_demodulator.c -o QPSK_demodulator.o $(CFLAGS)

@@ -72,10 +72,11 @@ void removeGI(Complex(*signal), Complex(*output_signal));
 
 void ADC(Complex(*received_signal), Complex(*estimated_signal));
 
-void FFT_demodulation(Complex(*estimated_signal), Complex(*H), int(*received_bit));
+void FFT_demodulation(Complex(*estimated_signal), Complex(*H), Complex(*modulated_signal));
 void FFT(Complex(*estimated_signal), Complex(*recovered_signal));
 void clearHimpact(Complex(*recovered_signal), Complex(*H));
-void demodulation(Complex(*signal), int(*received_bit));
+
+void QPSK_demodulator(Complex(*signal), int(*received_bit));
 
 void ber(int loop, int(*tbit), int(*rbit), double(*ber_i));
 
