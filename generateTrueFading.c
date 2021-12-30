@@ -2,8 +2,9 @@
 
 void generateTrueFading(Complex(*h1),Complex(*h2)){
 	Doppler(h1);
-    Doppler(h2);
     setPopagation(h1);
+//    system("pause");
+    Doppler(h2);
     setPopagation(h2);//H取模 
 }
 
@@ -56,28 +57,31 @@ void Doppler(Complex(*h))
         phin = PHI();
         u1 = uni();
         u2 = uni();
-        An.real = sqrt(-(1 / 16.0) * log(u1)) * cos(2 * PI * u2);//...
-        An.image = sqrt(-(1 / 16.0) * log(u1)) * sin(2 * PI * u2);//...
-        for (i = 0; i < (OFDM_N+GI); i++)
-        {
-            hn[i] = ComplexMulti(An, Exp(2 * PI * Fd * cos(thetan) * i * Ts + phin));
-        }
-        for (j = 0; j < (OFDM_N+GI); j++)//..............constant not h[i]
-        {
-            h[j].real = h[j].real + hn[j].real;
-            h[j].image = h[j].image + hn[j].image;
-        }
+        An.real = sqrt(-(1 / 16.0) * log(u1)) * cos(2 * PI * u2);
+        An.image = sqrt(-(1 / 16.0) * log(u1)) * sin(2 * PI * u2);
+        /* 时变的衰落 (time-varied fading)*/
+//        for (i = 0; i < (OFDM_N+GI); i++)
+//        {
+//            hn[i] = ComplexMulti(An, Exp(2 * PI * Fd * cos(thetan) * i * Ts + phin));
+//        }
+//        for (j = 0; j < (OFDM_N+GI); j++)
+//        {
+//            h[j].real = h[j].real + hn[j].real;
+//            h[j].image = h[j].image + hn[j].image;
+//        }
+		/*change to flat-fading, where h is a constant*/
+		hn[0] = ComplexMulti(An, Exp(2 * PI * Fd * cos(thetan) * i * Ts + phin));
+		h->real = h->real + hn[0].real;
+		h->image = h->image + hn[0].image;
+//		printf("fffffading h1=%lf + %lf\n", h->real, h->image);
     }
 
 }
 
 void setPopagation(Complex(*h)) {
-	int j;
-	for (j=0; j<OFDM_N+GI; j++)
-    {
-        h[j].real = Modules(h[j]);
-        h[j].image = 0;
-    }
+    h->real = Modules(*h);
+    h->image = 0;
+//    printf("mmmmmdoaf h1=%lf + %lf\n", h->real, h->image);
 }
 
 

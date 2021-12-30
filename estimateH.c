@@ -23,9 +23,9 @@ void estimateH(Complex(h1), Complex(h2), Complex(*H))
   generatePilots(QPSKPilots);
   oversampling_GI(QPSKPilots, IFFTPilotsAndGI);
   freSel_fading(IFFTPilotsAndGI, receivedIFFTPilotsAndGI, h1, h2);
-  // awgn(IFFTPilotsAndGI, IFFTPilotsAndGI);
-  // ADC(IFFTPilotsAndGI, estimatedIFFTPilotsAndGI);
-  removeGI(receivedIFFTPilotsAndGI, IFFTPilotsNoGI);
+  awgn(receivedIFFTPilotsAndGI, receivedIFFTPilotsAndGI);
+  ADC(receivedIFFTPilotsAndGI, ADCOutputIFFTPilotsAndGI);
+  removeGI(ADCOutputIFFTPilotsAndGI, IFFTPilotsNoGI);
   FFT(IFFTPilotsNoGI, FFTPilots);
   filter(FFTPilots, receivedQPSKPilots);
   generateH(receivedQPSKPilots, QPSKPilots, H);

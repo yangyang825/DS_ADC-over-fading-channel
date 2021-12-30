@@ -13,7 +13,7 @@
 /* Parameters                                              */
 /*---------------------------------------------------------*/
 
-#define LOOPN 100
+#define LOOPN 10000
 /*----------����----------*/
 #define sqr(x) ((x) * (x))
 #define DIM 100
@@ -64,10 +64,10 @@ void estimateH(Complex(h1), Complex(h2), Complex(*H));
 Complex generateOnePilot();
 void generatePilots(Complex(*pilots));
 void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H));
-
+/*channel:*/
 void awgn(Complex(*input_signal), Complex(*output_signal));
+void generateTrueFading(Complex(*h1),Complex(*h2));
 
-void generateTrueFading(Complex(*h1), Complex(*h2));
 double PHI();
 void Doppler(Complex(*h));
 void setPopagation(Complex(*h));
@@ -89,4 +89,4 @@ void getConvolution(Complex(h1), Complex(h2), Complex(*convolutionH));
 void filter(Complex(*recovered_signal), Complex(*QPSK_signal));
 
 //others
-  void checkH(Complex(*H));
+void checkH(Complex(*H));

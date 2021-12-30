@@ -4,11 +4,11 @@
   */
   void checkH(Complex(*H)){
   	int lengthOfH = sizeof(H)/sizeof(H[0]);
-  	if(lengthOfH == 64)
-	  {
-  			printf("now adding 000000...");
-//  			for()
-	  }
+//  	if(lengthOfH == 64)
+//	  {
+//  			printf("now adding 000000...");
+////  			for()
+//	  }
 	FILE* HFILE=NULL;
 	for(int i=0;i<OFDM_N;i++){
 		HFILE=fopen("C:\\C-SIMULATIONRESULT\\Hm.csv", "a");
