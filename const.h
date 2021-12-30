@@ -59,7 +59,12 @@ void oversampling_GI(Complex(*modulated_signal), Complex(*transmitted_signal));
 void IFFT(Complex(*FFT_signal), Complex(*OFDM_signal));
 void overSampling(Complex(*modulated_signal), Complex(*OFDM_signal));
 void addGI(Complex(*OFDM_signal), Complex(*transmitted_signal));
-void estimateH(Complex(*H), Complex(h1), Complex(h2));
+
+void estimateH(Complex(h1), Complex(h2), Complex(*H));
+Complex generateOnePilot();
+void generatePilots(Complex(*pilots));
+void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H));
+
 void awgn(Complex(*input_signal), Complex(*output_signal));
 
 void generateTrueFading(Complex(*h1), Complex(*h2));
@@ -82,3 +87,6 @@ void ber(int loop, int(*tbit), int(*rbit), double(*ber_i));
 
 void getConvolution(Complex(h1), Complex(h2), Complex(*convolutionH));
 void filter(Complex(*recovered_signal), Complex(*QPSK_signal));
+
+//others
+  void checkH(Complex(*H));

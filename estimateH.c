@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include "const.h"
-Complex generateOnePilot();
-void generatePilots(Complex(*pilots));
-void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H));
+
 /*
  *params: H---ͨ������pilot���,���ں���OFDM�źŵ�H
  *	1. Ƶ��������1024��pilot
@@ -14,13 +12,13 @@ void generateH(Complex(*estimatedPilots), Complex(*pilots), Complex(*H));
  *	7. received_pilot[i]/pilot[i] = H[i]
  *	8. �����H[i], ���ں��������OFDMѶ�Ź����ŵ� Z[m]=R[m]*H^(*)[m]
  */
-void estimateH(Complex(*H), Complex(h1), Complex(h2))
+void estimateH(Complex(h1), Complex(h2), Complex(*H))
 {
 
   Complex QPSKPilots[POINT_N], IFFTPilots[OFDM_N], IFFTPilotsAndGI[OFDM_N + GI];                               // transmitter used variables
   Complex receivedIFFTPilotsAndGI[OFDM_N + GI], ADCOutputIFFTPilotsAndGI[OFDM_N + GI], IFFTPilotsNoGI[OFDM_N]; // receiver used variables
-  Complex *FFTPilots;                                                                                          // demodulator used variables
-  Complex *receivedQPSKPilots;
+  Complex FFTPilots[OFDM_N];                                                                                          // demodulator used variables
+  Complex receivedQPSKPilots[POINT_N];
 
   generatePilots(QPSKPilots);
   oversampling_GI(QPSKPilots, IFFTPilotsAndGI);
@@ -28,15 +26,11 @@ void estimateH(Complex(*H), Complex(h1), Complex(h2))
   // awgn(IFFTPilotsAndGI, IFFTPilotsAndGI);
   // ADC(IFFTPilotsAndGI, estimatedIFFTPilotsAndGI);
   removeGI(receivedIFFTPilotsAndGI, IFFTPilotsNoGI);
-  FFT(IFFTPilotsNoGI, FFTPilots); 
+  FFT(IFFTPilotsNoGI, FFTPilots);
   filter(FFTPilots, receivedQPSKPilots);
   generateH(receivedQPSKPilots, QPSKPilots, H);
 
-  //	for(int i=0; i<POINT_N; i++){
-  //		printf("%d\tpilots before fading: QPSKPilots=%lf+%lf\t\n", i, QPSKPilots[i].real, QPSKPilots[i].image);
-  ////		printf("%d\tpilots after fading: IFFTPilotsAndGI=%lf+%lf\t\n", i, IFFTPilotsAndGI[612+i].real, IFFTPilotsAndGI[612+i].image);
-  //		printf("%d\tpilots when estimate H: estimatedQPSKPilots=%lf + %lf\n", i, estimatedQPSKPilots[i].real, estimatedQPSKPilots[i].image);
-  //	}
+
 }
 
 void generatePilots(Complex(*pilots))
@@ -44,6 +38,7 @@ void generatePilots(Complex(*pilots))
   for (int i = 0; i < POINT_N; i++)
   {
     pilots[i] = generateOnePilot();
+//    printf
   }
 }
 Complex generateOnePilot()

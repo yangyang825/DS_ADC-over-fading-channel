@@ -53,6 +53,8 @@ void IFFT(Complex(*FFT_signal), Complex(*OFDM_signal))
     for (int i = 0; i < subcar_N; i++) {
         temp_signal[i].real = 0;
         temp_signal[i].image = 0;
+        OFDM_signal[i].real = 0;
+        OFDM_signal[i].image = 0;
     }
 	for (int k = 0; k < OFDM_N; k++)	
     {
@@ -64,7 +66,6 @@ void IFFT(Complex(*FFT_signal), Complex(*OFDM_signal))
 		    OFDM_signal[k].real = OFDM_signal[k].real + temp_signal[k].real;
 		    OFDM_signal[k].image = OFDM_signal[k].image + temp_signal[k].image;
     	}
-    	//printf("%d 发送端频域的FFT信号为:%lf + %lfj\n", k, FFT_signal[k].real, FFT_signal[k].image);
 	}
 }
 void addGI(Complex(*OFDM_signal), Complex(*transmitted_signal))

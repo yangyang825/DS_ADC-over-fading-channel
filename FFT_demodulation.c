@@ -20,6 +20,7 @@ void FFT_demodulation(Complex(*estimated_signal), Complex(*H), Complex(*modulate
     for (int i = 0; i < POINT_N; i++) {
         modulated_signal[i].real = recovered_signal[612+i].real;
         modulated_signal[i].image = recovered_signal[612+i].image;
+        printf("接收端的modulated_signal[%d]=%lf +  %lf\n",i, modulated_signal[i].real, modulated_signal[i].image);
     }
     
     /*
@@ -51,17 +52,17 @@ void FFT(Complex(*estimated_signal), Complex(*recovered_signal))
             recovered_signal[n].real = recovered_signal[n].real + temp_signal[k].real;
             recovered_signal[n].image = recovered_signal[n].image + temp_signal[k].image;
         }
-//        printf("%d, FFT INPUT = %lf+%lf\n", n, estimated_signal[n].real, estimated_signal[n].image);
+//      printf("%d, FFT INPUT = %lf+%lf\n", n, estimated_signal[n].real, estimated_signal[n].image);
 //		printf("%d, FFT OUTPUT = %lf+%lf\n", n, recovered_signal[n].real, recovered_signal[n].image); // 1...........2.CHANNEL
     }
 }
 
 void clearHimpact(Complex(*recovered_signal), Complex(*H))
 {
-	for(int i=1; i<POINT_N; i++){
-//		printf("%d, clearHimpact前recovered_signal = %lf+%lf\n", i, recovered_signal[i].real, recovered_signal[i].image);
+	for(int i=0; i<POINT_N; i++){
+		printf("%d, clearHimpact前recovered_signal = %lf+%lf\n", i, recovered_signal[i].real, recovered_signal[i].image);
 		recovered_signal[i] = ComplexMulti(recovered_signal[i], ComplexConjugate(H[i]));
-//		printf("%d, clearHimpact之后recovered_signal = %lf+%lf\n", i, recovered_signal[i].real, recovered_signal[i].image);
+		printf("%d, clearHimpact之后recovered_signal = %lf+%lf\n", i, recovered_signal[i].real, recovered_signal[i].image);
 	}
 }
 
