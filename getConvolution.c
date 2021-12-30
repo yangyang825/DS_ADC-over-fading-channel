@@ -32,4 +32,21 @@ void getConvolution(Complex(h1), Complex(h2), Complex(*H))
   {
     H[i] = convolutionH[612 + i];
   }
+  /*
+  * Checking- do IFFT over convolutionH to see if it is right
+  */
+	FILE* HFILE=NULL;
+	for(int i=0;i<OFDM_N;i++){
+		HFILE=fopen("C:\\C-SIMULATIONRESULT\\Hm.csv", "a");
+    	fprintf(HFILE, "%lf , %lf\n", convolutionH[i].real, convolutionH[i].image);
+    	fclose(HFILE);
+	}
+	printf("will do IFFT OVER H");
+	system("pause");
+	Complex recovered_h[OFDM_N];
+	IFFT(convolutionH, recovered_h);
+	for(int i=0;i<OFDM_N;i++){
+		printf("recovered_h[%d]=%lf+%lf\n", i, recovered_h[i].real, recovered_h[i].image);
+	}
+	system("pause");
 }

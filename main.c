@@ -39,15 +39,17 @@ int main()
       h2.image = 0;
 
       getConvolution(h1, h2, H); // do FFT get real H for equalization
+      
       estimateH(H, h1, h2);      // estimate H
-
-      for (int i = 0; i < POINT_N; i++)
-      {
-        printf("eH[%d]=%lf\t%lf\n", i, H[i].real, H[i].image);
-      }
+//	  for (int i = 0; i < POINT_N; i++)
+//      {
+//        printf("main.c, test eH[%d]=%lf\t%lf\n", i, H[i].real, H[i].image);
+//      }
+//      system("pause");
       for (int loop = 10; loop < LOOPN; loop++)
       {
         system("pause");
+        printf("here is loo++");
         transmitter(transmitted_bit, modulated_signal);
         oversampling_GI(modulated_signal, transmitted_signal);
         // awgn(transmitted_signal,transmitted_signal);

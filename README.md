@@ -18,3 +18,7 @@ params: H---信道估计
 ## 中文乱码问题
 
 默认为 ANSI, 部分为 UTF-8, 用 codeblocks 或 notepad 另存为即可
+
+## debug 记录(含理论检查)
+
+[debug](https://inm12fy589.feishu.cn/docs/doccnYc5xDLF9wwqZBQebEIFQue#)
