@@ -8,13 +8,16 @@ double uniform01();
 
 void awgn(Complex(*input_signal), Complex(*output_signal))
 {
-    Complex noise[OFDM_N];
+    Complex noise[OFDM_N+GI];
+    for(int i=0; i<OFDM_N+GI;i++){
+    	noise[i].real=0;noise[i].image=0;
+	}
     noise_generator(noise);
-
+	
     for (int i=0; i<OFDM_N; i++){
-    	//printf("i= %d, 进入awgn前的信号%lf + %lf j\n", i, input_signal[i].real, input_signal[i].image);
-        output_signal[i] = ComplexAdd(input_signal[i], noise[i]);
-        //printf("i= %d, 进入awgn之后的信号%lf + %lf j\n", i, output_signal[i].real, output_signal[i].image);
+//    	printf("i= %d, 进入awgn前的信号%lf + %lf j\n", i, input_signal[i].real, input_signal[i].image);
+        output_signal[i].real = input_signal[i].real + noise[i].real;
+//        printf("i= %d, 进入awgn之后的信号%lf + %lf j\n", i, output_signal[i].real, output_signal[i].image);
     }
 }
 
@@ -22,10 +25,10 @@ void noise_generator(Complex(*noise))
 {
 	int n;
 	double u1, u2, num;
-
+//	printf("awgn-CNR=%lf\n", CNR);
 	num = pow(10.0, (-CNR/10));
 
-	for(n=0; n<OFDM_N; n++){
+	for(n=0; n<OFDM_N+GI; n++){
 
 		u1 = uniform01();
 		u2 = uniform01();

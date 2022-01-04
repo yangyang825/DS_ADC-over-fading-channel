@@ -24,25 +24,51 @@ double ber_i = 0;
 
 int main() {
 	srand((unsigned)time(NULL)); // rand function needed
-	/*
-	*Initialization
-	*/
-	h1.real = 1;
-	h1.image = 0;
-	h2.real = -1;
-	h2.image = 0;
-	for (Eb_N0 = 8; Eb_N0 < 30; Eb_N0++) {
-
+	for (Eb_N0 = 0; Eb_N0 < 50; Eb_N0+=5) {
+		/*
+		*Initialization
+		*/
+		h1.real = 1;
+		h1.image = 0;
+		h2.real = -1;
+		h2.image = 0;
+		for(int i=0; i<BITN; i++) {
+			transmitted_bit[i]=0;
+			received_bit[i]=0;
+		}
+		for(int i=0; i<POINT_N; i++) {
+			QPSK_signal[i].real=0;
+			QPSK_signal[i].image=0;
+			received_QPSK_signal[i].real=0;
+			received_QPSK_signal[i].image=0;
+			H[i].real = 0;
+			H[i].image = 0;
+		}
+		for(int i=0; i<OFDM_N; i++) {
+			OFDM_signal[i].real=0;
+			OFDM_signal[i].image=0;
+			estimated_signal[i].real=0;
+			estimated_signal[i].image=0;
+		}
+		for(int i=0; i<OFDM_N+GI; i++) {
+			transmitted_signal[i].real=0;
+			transmitted_signal[i].image=0;
+			received_signal[i].real=0;
+			received_signal[i].image=0;
+			estimated_signalAndGI[i].real=0;
+			estimated_signalAndGI[i].image=0;
+		}
 		Complex *h1ptr = &h1;
 		Complex *h2ptr = &h2;
 		generateTrueFading(h1ptr, h2ptr);
 
 		CNR = (double)Eb_N0 + 3.0;
+		AverageBER = 0;
 		for (int hloop = 0; hloop < HLOOP; hloop++) {
 			// system("pause");
 			// getConvolution(h1, h2, H); // do FFT get real H for equalization
 			estimateH(h1, h2, H);      // estimate H
-
+			ber_i = 0;
 			for (int loop = 0; loop < LOOPN; loop++) {
 				// system("pause");
 				// printf("here is loop++\n");
@@ -62,8 +88,8 @@ int main() {
 			printf("HHHhloop=%dʱ BER: Eb/N0 = %lf, AverageBER = %e\n",hloop, (CNR - 3.0), AverageBER);
 			FILE* HFILE=NULL;
 			HFILE=fopen("C:\\C-SIMULATIONRESULT\\Hm.csv", "a");
-	    	fprintf(HFILE, "HHHhloop=%d, %lf , %e\n",hloop, (CNR - 3.0), AverageBER);
-	    	fclose(HFILE);
+			fprintf(HFILE, "HHHhloop=%d, %lf , %e\n",hloop, (CNR - 3.0), AverageBER);
+			fclose(HFILE);
 			// MSE = SSE / (OFDM_N* LOOPN);
 			// printf("MSE %10.8f\n", MSE);
 		}

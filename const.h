@@ -13,12 +13,12 @@
 /* Parameters                                              */
 /*---------------------------------------------------------*/
 
-#define LOOPN 10000
+#define LOOPN 100
 /*----------����----------*/
 #define sqr(x) ((x) * (x))
 #define DIM 100
 /*----------channel----------*/
-#define HLOOP 10
+#define HLOOP 2
 /*----------transmitter----------*/
 #define POINT_N 64              //(1024)// //�ź�����
 #define BITN (POINT_N * 2)      // QPSK���ƣ��źŶ�Ӧ��bit����Ϊ�ź���������
