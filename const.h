@@ -13,17 +13,22 @@
 /* Parameters                                              */
 /*---------------------------------------------------------*/
 
-#define LOOPN 100
+#define LOOPN 10000
 /*----------����----------*/
 #define sqr(x) ((x) * (x))
 #define DIM 100
 /*----------channel----------*/
-#define HLOOP 2
+#define HLOOP 10
 /*----------transmitter----------*/
 #define POINT_N 64              //(1024)// //�ź�����
 #define BITN (POINT_N * 2)      // QPSK���ƣ��źŶ�Ӧ��bit����Ϊ�ź���������
 #define PI 3.141592654          // acos(-1.0)
 #define OneBySqrt2 0.7071067812 // 1.0/sqrt(2.0)
+//set IF frequency
+#define N_C		Left_StartF-POINT_N/2
+#define Left_StartF		subcar_N/2-deltaFrequency
+#define Right_StartF	subcar_N/2+deltaFrequency
+#define deltaFrequency	100
 /*----------����OFDM�ź�----------*/
 #define GI (OFDM_N / 4)   /* Guard interval */
 #define subcar_N 1024     // FFT�źŸ���
@@ -46,7 +51,8 @@
 #define FILENAME ".\\data\\awgn.dat"
 
 #define REALHFILE "realH.csv"
-
+/*-----------------ADC-------------*/
+#define ADCSAMPLING_N  50
 /*---------------------------------------------------------*/
 /* Subfunctions                                            */
 /*---------------------------------------------------------*/

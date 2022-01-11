@@ -17,14 +17,14 @@ double estimate(double *realSignal)
 {
 	double estimated_signal=0;
 	
-	int adcN = 35; 	//取样次数.......后期写进const.h里，用频率1/fs表示
+//	int adcN = 50000; 	//取样次数.......后期写进const.h里，用频率1/fs表示
 
 	double delta;
 	double sumOfDelta=0;
-	int bitStream[35];
+	int bitStream[ADCSAMPLING_N];//.....
 	//int *bitStream;
 	//bitStream = (int*)malloc(sizeof(int) * adcN);
-	for (int j = 0; j < adcN; j++)
+	for (int j = 0; j < ADCSAMPLING_N; j++)
 	{
 		//初始化
 		bitStream[j] = 0;
@@ -33,7 +33,7 @@ double estimate(double *realSignal)
 	double DACoutput = Vref;	//+ or -Vref
 
 	//对于每一个信号都取adcN次平均值
-	for (int j = 0; j < adcN; j++)
+	for (int j = 0; j < ADCSAMPLING_N; j++)
 	{
 		//初始化
 		bitStream[j] = 0;
@@ -54,7 +54,7 @@ double estimate(double *realSignal)
 //		free(bitStream);
 	}
 	//求平均 
-	estimated_signal /= adcN;
+	estimated_signal /= ADCSAMPLING_N;
 	//随着循环次数增加,能输出一个收敛于transmitted_signal[0]的值
 	return estimated_signal;
 }

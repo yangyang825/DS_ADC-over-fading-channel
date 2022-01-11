@@ -43,18 +43,24 @@ void estimateH(Complex(h1), Complex(h2), Complex(*H)) {
 	generatePilots(QPSKPilots);
 	oversampling_GI(QPSKPilots, IFFTPilotsAndGI);
 	freSel_fading(IFFTPilotsAndGI, receivedIFFTPilotsAndGI, h1, h2);
-	awgn(receivedIFFTPilotsAndGI, receivedIFFTPilotsAndGI);
+	awgn(IFFTPilotsAndGI, receivedIFFTPilotsAndGI);
 	ADC(receivedIFFTPilotsAndGI, ADCOutputIFFTPilotsAndGI);
 	removeGI(ADCOutputIFFTPilotsAndGI, IFFTPilotsNoGI);
 	FFT(IFFTPilotsNoGI, FFTPilots);
 	filter(FFTPilots, receivedQPSKPilots);
 	generateH(receivedQPSKPilots, QPSKPilots, H);
+//	for(int i=0; i<POINT_N; i++){
+//		printf("i=%d\n", i);
+//		printf("QPSKPilots=%lf+%lf\n", QPSKPilots[i].real, QPSKPilots[i].image);
+//		printf("receivedQPSKPilots=%lf+%lf\n", receivedQPSKPilots[i].real, receivedQPSKPilots[i].image);
+//		printf("estimated_signal=%lf+%lf\n", estimated_signal[i].real, estimated_signal[i].image);
+//		printf("receivedQPSKPilots=%lf + %lf\n", receivedQPSKPilots[i].real, receivedQPSKPilots[i].image);
+//	}
 }
 
 void generatePilots(Complex(*pilots)) {
 	for (int i = 0; i < POINT_N; i++) {
 		pilots[i] = generateOnePilot();
-//    printf
 	}
 }
 Complex generateOnePilot() {

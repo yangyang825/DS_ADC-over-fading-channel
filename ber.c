@@ -7,7 +7,6 @@ extern double CNR;
 void ber(int loop, int(*tbit), int(*rbit), double(*ber_i)) {
     int n, error = 0;
     double Pe;
-
     for (n = 0; n < BITN; n++) {
         if (tbit[n] != rbit[n])
         {
@@ -16,17 +15,17 @@ void ber(int loop, int(*tbit), int(*rbit), double(*ber_i)) {
     }
     Pe = (double)error / (double)BITN;
     *ber_i += (double)Pe / LOOPN;
-    if(loop%10 == 0) {
-    	    printf("%d次loop为: Eb/N0 = %f, Pe=%e\t ber_i= %e\n", loop, (CNR - 3.0), Pe, *ber_i);
+    if(loop%100 == 0) {
+//    	    printf("%d次loop为: Eb/N0 = %f, Pe=%e\t ber_i= %e\n", loop, (CNR - 3.0), Pe, *ber_i);
 	} 
 
     
     if (loop == LOOPN - 1) {
 
-        printf("ber.c内 loop=%d的BER: Eb/N0 = %f, ber_i = %e\n",loop, (CNR - 3.0), *ber_i);
+        printf("ber.c内 loop=%d PATH=%d 的BER: Eb/N0 = %f, ber_i = %e\n",loop, D, (CNR - 3.0), *ber_i);
 		FILE* berFILE=NULL;
 		berFILE=fopen("C:\\C-SIMULATIONRESULT\\ber.csv", "a");
-    	fprintf(berFILE, "%d , %lf , %e\n",loop, (CNR - 3.0), *ber_i);
+    	fprintf(berFILE, "PATH=%d , %d , %lf , %e\n",D, loop, (CNR - 3.0), *ber_i);
     	fclose(berFILE);
     }
 

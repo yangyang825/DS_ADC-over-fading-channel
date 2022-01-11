@@ -24,7 +24,8 @@ double ber_i = 0;
 
 int main() {
 	srand((unsigned)time(NULL)); // rand function needed
-	for (Eb_N0 = 0; Eb_N0 < 50; Eb_N0+=5) {
+	for (Eb_N0 = 10; Eb_N0 < 30; Eb_N0+=5) {
+//		system("pause");
 		/*
 		*Initialization
 		*/
@@ -69,6 +70,7 @@ int main() {
 			// getConvolution(h1, h2, H); // do FFT get real H for equalization
 			estimateH(h1, h2, H);      // estimate H
 			ber_i = 0;
+			SSE = 0;
 			for (int loop = 0; loop < LOOPN; loop++) {
 				// system("pause");
 				// printf("here is loop++\n");
@@ -76,13 +78,26 @@ int main() {
 				oversampling_GI(QPSK_signal, transmitted_signal);
 				awgn(transmitted_signal,transmitted_signal);
 				freSel_fading(transmitted_signal, received_signal, h1, h2); // CHANNEL
-				ADC(received_signal, estimated_signalAndGI);
+				ADC(transmitted_signal, estimated_signalAndGI);
+				for(int i=GI;i<OFDM_N+GI;i++){
+					SSE += sqr(received_signal[i].real-estimated_signalAndGI[i].real);
+				}
+				//debug
+//				printf("loop=%d\tSSE=%e\n",loop, SSE);
 				removeGI(estimated_signalAndGI, estimated_signal);
 				FFT_demodulation(estimated_signal, H, received_QPSK_signal);
 				QPSK_demodulator(received_QPSK_signal, received_bit);
-
 				ber(loop, transmitted_bit, received_bit, &ber_i);
+//				system("pause");
 			}
+			MSE = SSE / (LOOPN*(OFDM_N));
+			FILE* MSE_ADCFILE=NULL;
+			MSE_ADCFILE=fopen("C:\\C-SIMULATIONRESULT\\MSE_ADC.csv", "a");
+			printf("%d,%d,%d,%e\n", LOOPN, ADCSAMPLING_N, ADCSAMPLING_N*OFDM_N, MSE);
+			fprintf(MSE_ADCFILE, "%d,%d,%d,%e\n", LOOPN, ADCSAMPLING_N, ADCSAMPLING_N*OFDM_N, MSE);
+    		fclose(MSE_ADCFILE);
+			
+			
 			AverageBER += ber_i / HLOOP;
 			ber_i = 0.0;
 			printf("HHHhloop=%dʱ BER: Eb/N0 = %lf, AverageBER = %e\n",hloop, (CNR - 3.0), AverageBER);
@@ -90,8 +105,7 @@ int main() {
 			HFILE=fopen("C:\\C-SIMULATIONRESULT\\Hm.csv", "a");
 			fprintf(HFILE, "HHHhloop=%d, %lf , %e\n",hloop, (CNR - 3.0), AverageBER);
 			fclose(HFILE);
-			// MSE = SSE / (OFDM_N* LOOPN);
-			// printf("MSE %10.8f\n", MSE);
+
 		}
 	}
 	return 0;

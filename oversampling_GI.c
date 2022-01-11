@@ -40,8 +40,8 @@ void overSampling (Complex (*modulated_signal), Complex (*OFDM_signal))
     }
 	for (int k = 0; k < POINT_N; k++)// obtain FFT signals
     {
-    	FFT_signal[k+100+(subcar_N/2)] = modulated_signal[k];//[~512~] 512+0+100
-    	FFT_signal[-k-100+(subcar_N / 2)] = conjugate_signal[k];
+    	FFT_signal[k+deltaFrequency+(subcar_N/2)] = modulated_signal[k];//[~512~] 512+0+100
+    	FFT_signal[-k-deltaFrequency+(subcar_N / 2)] = conjugate_signal[k];
 	}
   	/* ×öIFFT */
   	IFFT(FFT_signal, OFDM_signal);

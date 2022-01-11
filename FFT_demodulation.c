@@ -18,9 +18,8 @@ void FFT_demodulation(Complex(*estimated_signal), Complex(*H), Complex(*modulate
 	*recovered_signal: [0,349)=0, [349, 412]=调制信号, (412-512-612)=0, [612,675]=调制信号, (675,1023]=0
 	*/
     for (int i = 0; i < POINT_N; i++) {
-        modulated_signal[i].real = recovered_signal[612+i].real;
-        modulated_signal[i].image = recovered_signal[612+i].image;
-//        printf("接收端的modulated_signal[%d]=%lf +  %lf\n",i, modulated_signal[i].real, modulated_signal[i].image);
+        modulated_signal[i].real = recovered_signal[Right_StartF+i].real;
+        modulated_signal[i].image = recovered_signal[Right_StartF+i].image;
     }
     
     /*
