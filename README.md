@@ -1,4 +1,4 @@
-# frequencySelctiveFading_OFDM-ADC-system
+# DS_ADC-over-fading-channel
 
 内容:
 
@@ -15,10 +15,5 @@ params: H---信道估计
 9. received_pilot[i]/pilot[i] = H[i]
 10. 最后获得 H[i], 用于后续传输的 OFDM 讯号估计信道 Z[m]=R[m]/H[m]
 
-## 中文乱码问题
 
-默认为 ANSI, 部分为 UTF-8, 用 codeblocks 或 notepad 另存为即可
-
-## debug 记录(含理论检查)
-
-[debug](https://inm12fy589.feishu.cn/docs/doccnYc5xDLF9wwqZBQebEIFQue#)
+key words: first order Delta-Sigma ADC, 2-path Rayleigh fading, oversampling, LS channel estimation
