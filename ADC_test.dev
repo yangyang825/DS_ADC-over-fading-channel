@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=00000000e0000000001000000
-UnitCount=20
+UnitCount=19
 
 [VersionInfo]
 Major=1
@@ -200,18 +200,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit17]
-FileName=filter.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit18]
-FileName=QPSK_demodulator.c
+FileName=checkH.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -231,7 +221,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit19]
-FileName=checkH.c
+FileName=generateTrueFading.c
 CompileCpp=0
 Folder=
 Compile=1
@@ -242,6 +232,16 @@ BuildCmd=
 
 [Unit20]
 FileName=generateTrueFading.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit17]
+FileName=QPSK_demodulator.c
 CompileCpp=0
 Folder=
 Compile=1
